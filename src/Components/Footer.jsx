@@ -1,17 +1,16 @@
-import React from 'react'
+// Footer.js
+import React from "react";
+import "./Footer.css";
 
-const Footer = () => {
-  return (
-    <div className='footer'> 
-    <div className='footer-image'>
-image
+const Footer = () => (
+  <footer className="footer">
+    <p>© {new Date().getFullYear()} BlogByYou. All rights reserved.</p>
+    <div className="footer-links">
+      {/* <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a> */}
     </div>
-    <div className='footer-content'>
-      
-      made with react js
-      </div>     
-    </div>
-  )
-}
+  </footer>
+);
 
-export default Footer
+export default Footer;

@@ -1,58 +1,80 @@
-import {useState,useContext} from 'react'
-import { Link,useNavigate } from 'react-router-dom'
-import { AuthContext } from '../Context/context'
+import { useState, useContext} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Context/context';
+import BackgroundWrapper from '../Components/BackgroundWrapper'; // import this
+import './Login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [loginInputs, setLoginInputs] = useState({
+    email: '',
+    password: '',
+  });
 
+  const { login } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const navigate = useNavigate()
+  const handleLoginInputs = (event) => {
+    setLoginInputs((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
-const [loginInputs, setLoginInputs] = useState({
+  const handleLoginSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await login(loginInputs);
+      navigate('/');
+    } catch (err) {
+      setErrorMessage(err?.response?.data);
+    }
+  };
 
-  email:"",
-  password : ""
-});
+  return (
+    <BackgroundWrapper>
+      <div className="auth">
+        <form className="login-form" onSubmit={handleLoginSubmit}>
+          <h2 className="login-title">Login</h2>
 
-const {login,currentUser} = useContext(AuthContext);
+          <div className="input-group">
+            <input
+              required
+              type="text"
+              name="email"
+              onChange={handleLoginInputs}
+              placeholder="Email..."
+              className="login-input"
+            />
+          </div>
 
-const [errorMessage, setErrorMessage] = useState(null);
-const handleLoginInputs = (event)=>{
+          <div className="input-group">
+            <input
+              required
+              type="password"
+              name="password"
+              onChange={handleLoginInputs}
+              placeholder="Password..."
+              className="login-input"
+            />
+          </div>
 
-  setLoginInputs((prev)=>({...prev, [event.target.name] : event.target.value}))
-}
+          <button className="login-btn" type="submit">
+            Login
+          </button>
 
-const handleLoginSubmit = async (event)=>{
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-  event.preventDefault();
- 
-  try {
-    
-   await login(loginInputs)
-    navigate("/")
-  } catch (err) {
+          <div className="register-link">
+            Don't have an account?
+            <Link to="/register" className="register-btn">
+              Register
+            </Link>
+          </div>
+        </form>
+      </div>
+    </BackgroundWrapper>
+  );
+};
 
-    setErrorMessage(err?.response?.data)
-  }
-
-
-
-}
-
-
-console.log(currentUser)
-  return (<>
-    <div className='auth'>
-      <h2>Login</h2>
-      <form>
-       <input required type='text' name='email' onChange={handleLoginInputs} placeholder='Email...' />
-        <input required type='password' name='password' onChange={handleLoginInputs} placeholder='Password...' /> 
-        <button onClick={handleLoginSubmit} >Login</button>
-       {errorMessage!=null && <p>{errorMessage}</p> } 
-        <span>Don't have an account ?  <Link to='/register' >Register</Link></span>
-      </form>
-    </div>
-    </>
-  )
-}
-
-export default Login
+export default Login;
