@@ -49,7 +49,7 @@ const Home = () => {
             whileHover={{ scale: 1.05 }}
           >
             <div className="post-image">
-              <img src={post.imageUrl} alt="image is not shwoin" />
+              <img src={post.imageUrl} alt="this is an alt for the img" />
             </div>
             <div className="post-content">
               
