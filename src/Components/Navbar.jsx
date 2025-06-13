@@ -63,7 +63,7 @@ const Navbar = () => {
 
           {/* Write Button */}
           <div className="write">
-            <Link className='link write-link' to='/write'>
+            <Link className='link write-link' to='/'>
               <h6>Write</h6>
             </Link>
           </div>

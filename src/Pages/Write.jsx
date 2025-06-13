@@ -5,6 +5,7 @@ import { db, storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { AuthContext } from '../Context/context';
+import './Write.css';
 
 const Write = () => {
   const [value, setValue] = useState('');
@@ -17,14 +18,12 @@ const Write = () => {
     try {
       let imageUrl = "";
 
-      // 1. Upload file if exists
       if (file) {
         const fileRef = ref(storage, `postImages/${Date.now()}-${file.name}`);
         await uploadBytes(fileRef, file);
         imageUrl = await getDownloadURL(fileRef);
       }
 
-      // 2. Save post to Firestore
       await addDoc(collection(db, "posts"), {
         title,
         content: value,
@@ -42,19 +41,26 @@ const Write = () => {
   };
 
   return (
-    <div className='add'>
-      <div className="content">
-        <input type="text" placeholder='Title' onChange={(e) => setTitle(e.target.value)} />
+    <div className="write-page">
+      <div className="write-content">
+        <input
+          type="text"
+          placeholder="Title"
+          className="write-title-input"
+          onChange={(e) => setTitle(e.target.value)}
+        />
         <div className="editor-container">
           <ReactQuill theme="snow" value={value} onChange={setValue} />
         </div>
       </div>
-      <div className="menu">
-        <div className="item">
-          <h1>Publish</h1>
-          <span>Status: <b>Draft</b></span>
-          <span>Visibility: <b>Public</b></span>
 
+      <div className="write-sidebar">
+        <div className="sidebar-section">
+          <h2>Publish</h2>
+          <p>Status: <b>Draft</b></p>
+          <p>Visibility: <b>Public</b></p>
+
+          <label htmlFor="file" className="upload-label">Upload Image</label>
           <input
             style={{ display: 'none' }}
             type="file"
@@ -62,14 +68,17 @@ const Write = () => {
             name="file"
             onChange={(e) => setFile(e.target.files[0])}
           />
-          <label htmlFor="file">Upload Image</label>
-          <button>Save as Draft</button>
-          <button onClick={handlePublish}>Publish</button>
+
+          <div className="sidebar-buttons">
+            <button className="draft-btn">Save as Draft</button>
+            <button className="publish-btn" onClick={handlePublish}>Publish</button>
+          </div>
         </div>
-        <div className="item">
-          <h1>Category</h1>
+
+        <div className="sidebar-section">
+          <h2>Category</h2>
           {["art", "science", "technology", "cinema", "design", "food"].map((cat) => (
-            <div key={cat}>
+            <div key={cat} className="category-option">
               <input
                 type="radio"
                 id={cat}

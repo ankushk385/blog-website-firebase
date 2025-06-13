@@ -1,0 +1,129 @@
+.single-page {
+  background-color: #f4f4f4;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.single-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.post-content {
+  flex: 3;
+  max-width: 64%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.edit-controls img {
+  width: 24px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.post-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.post-body {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.7;
+}
+
+/* Edit Section */
+.edit-section {
+  margin-top: 2rem;
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.edit-section h3 {
+  margin-bottom: 1rem;
+  color: #0077ff;
+}
+
+.edit-section input[type="text"],
+.edit-section input[type="file"] {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.edit-quill {
+  height: 150px;
+  margin-bottom: 1rem;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.update-btn,
+.cancel-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.update-btn {
+  background: #0077ff;
+  color: white;
+}
+
+.cancel-btn {
+  background: #ddd;
+  color: black;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+    max-width: 25%;
+}
+
+.sidebar-heading {
+  font-size: 16px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #444;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}

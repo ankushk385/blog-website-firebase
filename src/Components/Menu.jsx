@@ -1,4 +1,3 @@
-import React from 'react'
 
 const Menu = () => {
 
@@ -28,7 +27,7 @@ const Menu = () => {
 
   return (
     <div className='menu'>
-      <h1>other posts you may like </h1>
+
 
       {
         posts.map((post)=>(

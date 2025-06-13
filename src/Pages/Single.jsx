@@ -1,200 +1,145 @@
-import { useContext, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Menu from '../Components/Menu';
-import { AuthContext } from '../Context/context'
-import moment from 'moment'
-import { doc, getDoc, deleteDoc,updateDoc  } from "firebase/firestore";
-import { db } from "../firebase"; 
+import { AuthContext } from '../Context/context';
+import moment from 'moment';
+import { doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { db, storage } from '../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from '../firebase'; // adjust path as needed
-
-
-
+import './Single.css';
 
 const Single = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const postID = location.pathname.split('/')[2];
+  const { currentUser } = useContext(AuthContext);
 
-const location = useLocation();
-const navigate = useNavigate();
-
-const postID = location.pathname.split("/")[2];
-
-const {currentUser} = useContext(AuthContext);
-
-const [post, setpost] = useState({})
-
-const [isEditing, setIsEditing] = useState(false);
-const [editData, setEditData] = useState({
-  title: '',
-  cat: '',
-  content: ''
-});
-
-const [imageFile, setImageFile] = useState(null);
-
-
-
-
-
-
-const handleDeletePost = async () => {
-  try {
-    await deleteDoc(doc(db, "posts", postID));
-    console.log("Post deleted");
-    navigate("/"); 
-  } catch (error) {
-    console.log("Delete error:", error);
-  }
-};
-
-const handleUpdatePost = () => {
-  setEditData({
-    title: post.title,
-    cat: post.cat,
-    content: post.content
+  const [post, setPost] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    title: '',
+    cat: '',
+    content: ''
   });
-  setIsEditing(true);
-};
+  const [imageFile, setImageFile] = useState(null);
 
-const submitUpdate = async () => {
-  try {
-    let imageUrl = post.postIMG; // fallback to existing
-
-    // If new image selected, upload it
-    if (imageFile) {
-      const storageRef = ref(storage, `postImages/${Date.now()}_${imageFile.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
-      await new Promise((resolve, reject) => {
-        uploadTask.on(
-          "state_changed",
-          null,
-          reject,
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              imageUrl = url;
-              resolve();
-            });
-          }
-        );
-      });
-    }
-
-    const postRef = doc(db, "posts", postID);
-    await updateDoc(postRef, {
-      title: editData.title,
-      postIMG: imageUrl,
-      cat: editData.cat,
-      description: editData.description
-    });
-
-    alert("Post updated!");
-    setIsEditing(false);
-    window.location.reload(); // Or re-fetch the post data
-
-  } catch (err) {
-    console.error("Update error:", err);
-    alert("Update failed.");
-  }
-};
-
-
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const docRef = doc(db, "posts", postID); // 'posts' = collection name
+  useEffect(() => {
+    const fetchPost = async () => {
+      const docRef = doc(db, 'posts', postID);
       const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) setPost(docSnap.data());
+    };
+    fetchPost();
+  }, [postID]);
 
-      if (docSnap.exists()) {
-        setpost(docSnap.data());
-        console.log("Post data:", docSnap.data());
-      } else {
-        console.log("No such document!");
+  const handleDeletePost = async () => {
+    await deleteDoc(doc(db, 'posts', postID));
+    navigate('/');
+  };
+
+  const handleUpdatePost = () => {
+    setEditData({
+      title: post.title,
+      cat: post.cat,
+      content: post.content
+    });
+    setIsEditing(true);
+  };
+
+  const submitUpdate = async () => {
+    try {
+      let imageUrl = post.imageUrl;
+      if (imageFile) {
+        const storageRef = ref(storage, `postImages/${Date.now()}_${imageFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+        await new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            null,
+            reject,
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                imageUrl = url;
+                resolve();
+              });
+            }
+          );
+        });
       }
-    } catch (error) {
-      console.log("Error getting post:", error);
+
+      await updateDoc(doc(db, 'posts', postID), {
+        title: editData.title,
+        imageUrl,
+        cat: editData.cat,
+        content: editData.content
+      });
+
+      alert('Post updated!');
+      setIsEditing(false);
+      window.location.reload();
+    } catch (err) {
+      console.error('Update error:', err);
     }
   };
 
-  fetchData();
-}, [postID]);
-
-
-
   return (
-    <div className='single'>
-      <div className="content">
-        <div className="image">
-          <img src={post.imageUrl} alt='random' />
-        </div>
-         <div className="user-image">
-          <img src={post.userIMG} alt='random' />
+    <div className="single-page">
+      <div className="single-container">
+        <div className="post-content">
+          <img className="post-image" src={post.imageUrl} alt="Post" />
+          <div className="post-meta">
+            <span>{post.author}</span>
+            <span>{moment(post.createdAt?.toDate?.()).fromNow()}</span>
+            {currentUser?.email === post.author && (
+              <div className="edit-controls">
+                <img onClick={handleUpdatePost} src="https://cdn-icons-png.flaticon.com/512/5996/5996831.png" alt="Edit" />
+                <img onClick={handleDeletePost} src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png" alt="Delete" />
+              </div>
+            )}
           </div>
-             
-        <div className="user-info">
-        <span>{post.author}</span>
-        <p>{moment(post.createdAt).fromNow()}</p>
-        
-        {
-          currentUser?.username===post.username  && <div className='edit'>
-          <Link to={`/write?edit=2`}>          
-          </Link>
-          <img onClick={handleUpdatePost} src="https://cdn-icons-png.flaticon.com/512/5996/5996831.png" alt='random' />
-          <img onClick={handleDeletePost} src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png " alt='random' />
-        </div>
-        }   
-        
+          <h2 className="post-title">{post.title}</h2>
+          <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
+
+          {isEditing && (
+            <div className="edit-section">
+              <h3>Edit Post</h3>
+              <input
+                type="text"
+                placeholder="Title"
+                value={editData.title}
+                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+              />
+              <input type="file" onChange={(e) => setImageFile(e.target.files[0])} />
+              <input
+                type="text"
+                placeholder="Category"
+                value={editData.cat}
+                onChange={(e) => setEditData({ ...editData, cat: e.target.value })}
+              />
+              <ReactQuill
+                className="edit-quill"
+                theme="snow"
+                value={editData.content}
+                onChange={(val) => setEditData({ ...editData, content: val })}
+              />
+              <div className="edit-buttons">
+                <button onClick={submitUpdate} className="update-btn">Submit</button>
+                <button onClick={() => setIsEditing(false)} className="cancel-btn">Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="content-title">
-<h2>{post.title}</h2>
+        <div className="sidebar">
+          <h4 className="sidebar-heading">Other stories we think you'll enjoy</h4>
+          <Menu />
+        </div>
       </div>
-      <div className="content-desc">
-        {post.content}
-        </div>   
-      </div>    
-
-
-
-      {isEditing && (
-  <div className="edit-dialog">
-    <h2>Edit Post</h2>
-    <input
-      type="text"
-      placeholder="Title"
-      value={editData.title}
-      onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-    />
-   <input
-  type="file"
-  onChange={(e) => setImageFile(e.target.files[0])}
-/>
-{imageFile && <p>Selected image: {imageFile.name}</p>}
-    <input
-      type="text"
-      placeholder="Category"
-      value={editData.cat}
-      onChange={(e) => setEditData({ ...editData, cat: e.target.value })}
-    />
-    <ReactQuill
-      theme="snow"
-      value={editData.content}
-      onChange={(value) => setEditData({ ...editData, content: value })}
-    />
-    <button onClick={submitUpdate}>Submit</button>
-    <button onClick={() => setIsEditing(false)}>Cancel</button>
-  </div>
-)}
-
-
-
-
-
-        <Menu/>
     </div>
-  )
-}
+  );
+};
 
-export default Single
+export default Single;

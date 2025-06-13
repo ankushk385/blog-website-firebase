@@ -1,0 +1,139 @@
+/* Styles/Write.css */
+.write-page {
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+  background-color: transparent;
+  z-index: 1;
+  position: relative;
+  min-height: 100vh;
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+.write-content {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.write-title-input {
+  font-size: 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  background-color: #f8f8f8;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.write-title-input:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 10px #0077ff55;
+  background-color: white;
+}
+
+.editor-container .ql-toolbar {
+  border-radius: 12px 12px 0 0;
+  background: #f0f0f0;
+}
+
+.editor-container .ql-container {
+  border-radius: 0 0 12px 12px;
+  background: white;
+  min-height: 300px;
+}
+
+.write-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sidebar-section {
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border: 2px solid #0077ff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 119, 255, 0.15);
+}
+
+.sidebar-section h2 {
+  color: #0077ff;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.upload-label {
+  display: inline-block;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(to right, #0077ff, #ff77ff);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #0077ff66;
+}
+
+.sidebar-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.draft-btn,
+.publish-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.draft-btn {
+  background-color: #ddd;
+  color: #333;
+}
+
+.draft-btn:hover {
+  background-color: #ccc;
+  transform: scale(1.05);
+}
+
+.publish-btn {
+  background: linear-gradient(to right, #0077ff, #ff77ff);
+  color: white;
+}
+
+.publish-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #0077ff66;
+}
+
+.category-option {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
